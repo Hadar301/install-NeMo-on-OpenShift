@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nemo-training-security-config
+  namespace: hacohen-nemo
+data:
+  training: |
+    container_defaults:
+      securityContext:
+        privileged: true
+        runAsUser: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+        readOnlyRootFilesystem: false
+        allowPrivilegeEscalation: true
+      env:
+        - name: NVIDIA_DRIVER_CAPABILITIES
+          value: "all"
+        - name: NVIDIA_REQUIRE_CUDA
+          value: ""
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: "all"
+    pod_defaults:
+      runtimeClassName: ""
+      securityContext:
+        fsGroup: 0
+        runAsUser: 0
+        runAsGroup: 0
+      hostIPC: true
+      hostPID: true

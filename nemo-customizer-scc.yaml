@@ -1,0 +1,45 @@
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: nemo-customizer-scc
+# Priority higher than restricted to ensure this SCC is chosen
+priority: 10
+allowHostDirVolumePlugin: true
+allowHostIPC: true
+allowHostNetwork: false
+allowHostPID: true
+allowHostPorts: false
+allowPrivilegedContainer: true
+allowPrivilegeEscalation: true
+# Force read-write root filesystem
+readOnlyRootFilesystem: false
+# Allow any UID/GID
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+  seLinuxOptions:
+    type: spc_t
+fsGroup:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+# Add all capabilities that might be needed
+defaultAddCapabilities:
+- SYS_ADMIN
+- SYS_RESOURCE
+- IPC_LOCK
+requiredDropCapabilities: []
+# Allowed volume types
+volumes:
+- configMap
+- downwardAPI
+- emptyDir
+- persistentVolumeClaim
+- projected
+- secret
+- hostPath
+# Service accounts that can use this SCC
+users:
+- system:serviceaccount:hacohen-nemo:nemocustomizer-sample
+- system:serviceaccount:hacohen-nemo:default

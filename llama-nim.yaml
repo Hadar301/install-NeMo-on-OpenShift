@@ -1,0 +1,140 @@
+---
+apiVersion: apps.nvidia.com/v1alpha1
+kind: NIMCache
+metadata:
+  name: meta-llama3-1b-instruct
+  namespace: hacohen-nemo
+spec:
+  source:
+    ngc:
+      modelPuller: nvcr.io/nim/meta/llama-3.2-1b-instruct:1.8.3
+      pullSecret: ngc-secret
+      authSecret: ngc-api-secret
+      model:
+        engine: tensorrt_llm
+        tensorParallelism: "1"
+  storage:
+    pvc:
+      create: true
+      storageClass: "gp3-csi"
+      size: "50Gi"
+      volumeAccessMode: ReadWriteOnce
+  tolerations:
+    - key: "g5-gpu"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+
+
+---
+apiVersion: apps.nvidia.com/v1alpha1
+kind: NIMPipeline
+metadata:
+  name: llama3-1b-pipeline
+  namespace: hacohen-nemo
+spec:
+  services:
+    - name: meta-llama3-1b-instruct
+      enabled: true
+      spec:
+        env:
+          - name: NIM_PEFT_SOURCE
+            value: http://nemoentitystore-sample.hacohen-nemo.svc.cluster.local:8000
+          - name: NIM_PEFT_REFRESH_INTERVAL
+            value: "180"
+          - name: NIM_MAX_CPU_LORAS
+            value: "16"
+          - name: NIM_MAX_GPU_LORAS
+            value: "8"
+          - name: NIM_GUIDED_DECODING_BACKEND
+            value: fast_outlines
+        image:
+          repository: nvcr.io/nim/meta/llama-3.2-1b-instruct
+          tag: 1.8.3
+          pullPolicy: IfNotPresent
+          pullSecrets:
+          - ngc-secret
+        authSecret: ngc-api-secret
+        storage:
+          nimCache:
+            name: meta-llama3-1b-instruct
+            profile: ''
+        replicas: 1
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+        tolerations:
+          - key: "g5-gpu"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
+        expose:
+          service:
+            type: ClusterIP
+            port: 8000
+
+
+
+# apiVersion: apps.nvidia.com/v1alpha1
+# kind: NIMService
+# metadata:
+#   name: llama3-1b-nim
+#   namespace: hacohen-nemo
+# spec:
+#   env:
+#     - name: NIM_PEFT_SOURCE
+#       value: http://nemoentitystore-sample.hacohen-nemo.svc.cluster.local:8000
+#     - name: NIM_PEFT_REFRESH_INTERVAL
+#       value: "180"
+#     - name: NIM_MAX_CPU_LORAS
+#       value: "16"
+#     - name: NIM_MAX_GPU_LORAS
+#       value: "8"
+#     - name: NIM_ENABLE_CUSTOMIZATION
+#       value: "true"
+#     - name: NIM_CUSTOMIZATION_ENABLED_MODELS
+#       value: "meta/llama-3.2-1b-instruct@2.0"
+#   image:
+#     repository: nvcr.io/nim/meta/llama-3.2-1b-instruct
+#     tag: latest
+#     pullSecrets:
+#       - ngc-secret
+#   authSecret: ngc-api-secret
+#   replicas: 1
+#   startupProbe:
+#     probe:
+#       httpGet:
+#         path: /v1/health/ready
+#         port: 8000
+#       initialDelaySeconds: 300
+#       periodSeconds: 30
+#       failureThreshold: 60
+#       timeoutSeconds: 5
+#   resources:
+#     limits:
+#       nvidia.com/gpu: 1
+#       cpu: "4"
+#       memory: "20Gi"
+#     requests:
+#       nvidia.com/gpu: 1
+#       cpu: "2"
+#       memory: "10Gi"
+#   tolerations:
+#     - key: "g5-gpu"
+#       operator: "Equal"
+#       value: "true"
+#       effect: "NoSchedule"
+#     # - key: "g6e-gpu"
+#     #   operator: "Equal"
+#     #   value: "true"
+#     #   effect: "NoSchedule"
+#   storage:
+#     pvc:
+#       create: true
+#       storageClass: "gp3-csi"
+#       size: "50Gi"
+#       volumeAccessMode: ReadWriteOnce
+#   expose:
+#     service:
+#       type: ClusterIP
+#       port: 8000
