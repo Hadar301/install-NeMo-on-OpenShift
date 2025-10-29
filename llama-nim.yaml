@@ -47,7 +47,7 @@ spec:
           - name: NIM_MAX_GPU_LORAS
             value: "8"
           - name: NIM_GUIDED_DECODING_BACKEND
-            value: fast_outlines
+            value: lm-format-enforcer
         image:
           repository: nvcr.io/nim/meta/llama-3.2-1b-instruct
           tag: 1.8.3
