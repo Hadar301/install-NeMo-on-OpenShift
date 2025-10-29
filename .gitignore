@@ -5,3 +5,5 @@ llama-nim-prev.yaml
 nemo-configs-fixed.yaml
 nemo-configs.yaml.backup
 .env
+.DS_store
+.claude
