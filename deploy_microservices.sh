@@ -2,15 +2,11 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# echo "Applying NeMo configuration ConfigMaps..."
-# oc apply -f nemo-configs.yaml
-# echo "Done applying NeMo configs (nemo-training-config and nemo-model-config)"
-
 echo "Installing LLAMA..."
 oc apply -f llama-nim.yaml
 echo "Done Installing LLAMA"
 
-cd "$SCRIPT_DIR/k8s-nim-operator/config/samples/nemo/25.06" # latest
+cd "$SCRIPT_DIR/k8s-nim-operator/config/samples/nemo/25.06" 
 
 for file in apps_v1alpha1_nemodatastore.yaml apps_v1alpha1_nemoentitystore.yaml apps_v1alpha1_nemocustomizer.yaml apps_v1alpha1_nemoevaluator.yaml apps_v1alpha1_nemoguardrails.yaml nemocustomizer_config.yaml; do
   echo "Applying $file..."
@@ -140,30 +136,9 @@ oc patch nemocustomizer nemocustomizer-sample -n $NAMESPACE --type='merge' -p='
   }
 }'
 
-echo "Waiting for NemoCustomizer and meta-llama3-1b-instruct to be ready..."
+echo "Waiting for NemoCustomizer ready..."
 oc wait --for=condition=ready nemocustomizer/nemocustomizer-sample -n $NAMESPACE --timeout=600s
-# oc wait --for=condition=ready nimpipeline/llama3-1b-pipeline -n $NAMESPACE --timeout=1000s
-echo "NemoCustomizer is ready, proceeding with patches..."
-
-# "value": [
-#       {
-#         "effect": "NoSchedule",
-#         "key": "nvidia.com/gpu",
-#         "operator": "Exists"
-#       },
-#       {
-#         "effect": "NoSchedule",
-#         "key": "g5-gpu",
-#         "operator": "Equal",
-#         "value": "true"
-#       },
-#       {
-#         "effect": "NoSchedule",
-#         "key": "g6e-gpu",
-#         "operator": "Equal",
-#         "value": "true"
-#       }
-#     ]
+echo "NemoCustomizer is ready..."
 
 
 cd "$SCRIPT_DIR"
@@ -180,19 +155,3 @@ oc get route
 echo "DONE!"
 
 
-# # Deploy llama3-1b-pipeline with GPU tolerations added
-# echo "Applying llama3-1b-pipeline.yaml with GPU tolerations..."
-# sed "s/namespace: nemo/namespace: $NAMESPACE/g" llama3-1b-pipeline.yaml | \
-# sed "s/\\.nemo\\.svc\\.cluster\\.local/.$NAMESPACE.svc.cluster.local/g" | \
-# sed 's/storageClass: ""/storageClass: "gp3-csi"/g' | \
-# sed '/replicas: 1/a\
-#         tolerations:\
-#           - key: "g5-gpu"\
-#             operator: "Equal"\
-#             value: "true"\
-#             effect: "NoSchedule"\
-#           - key: "g6e-gpu"\
-#             operator: "Equal"\
-#             value: "true"\
-#             effect: "NoSchedule"' | \
-# oc apply -f -
