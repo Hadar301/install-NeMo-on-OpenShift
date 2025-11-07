@@ -140,6 +140,19 @@ echo "Waiting for NemoCustomizer ready..."
 oc wait --for=condition=ready nemocustomizer/nemocustomizer-sample -n $NAMESPACE --timeout=600s
 echo "NemoCustomizer is ready..."
 
+oc patch nemoevaluator nemoevaluator-sample -n hacohen-nemo --type='json' -p='[
+  {
+    "op": "add",
+    "path": "/spec/env",
+    "value": [
+      {
+        "name": "NIM_PROXY_URL",
+        "value": "http://meta-llama3-1b-instruct.hacohen-nemo.svc.cluster.local:8000"
+      }
+    ]
+  }
+]'
+oc wait --for=condition=ready pod -l app=nemoevaluator-sample -n hacohen-nemo --timeout=300s
 
 cd "$SCRIPT_DIR"
 # Apply the SCC
@@ -150,7 +163,7 @@ oc adm policy add-scc-to-user nemo-customizer-scc -z default -n $NAMESPACE
 oc adm policy add-scc-to-user nemo-customizer-scc -z nemocustomizer-sample -n $NAMESPACE
 
 oc get pods -n $NAMESPACE
-oc expose svc jupyter-service
+# oc expose svc jupyter-service
 oc get route
 echo "DONE!"
 
