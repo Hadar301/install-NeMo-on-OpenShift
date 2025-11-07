@@ -1,5 +1,4 @@
 k8s-nim-operator/
-config.py
 *.tgz
 llama-nim-prev.yaml
 nemo-configs-fixed.yaml
