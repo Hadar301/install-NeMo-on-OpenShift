@@ -1,16 +1,24 @@
-# (Required) NeMo Microservices URLs
-NDS_URL = "http://nemodatastore-sample.hacohen-nemo.svc.cluster.local:8000" # Data Store
-ENTITY_STORE_URL = "http://nemoentitystore-sample.hacohen-nemo.svc.cluster.local:8000" # Entity Store
-CUSTOMIZER_URL = "http://nemocustomizer-sample.hacohen-nemo.svc.cluster.local:8000" # Customizer
-EVALUATOR_URL = "http://nemoevaluator-sample.hacohen-nemo.svc.cluster.local:8000" # Evaluator
-GUARDRAILS_URL = "http://nemoguardrails-sample.hacohen-nemo.svc.cluster.local:8000" # Guardrails
-NIM_URL = "http://meta-llama3-1b-instruct.hacohen-nemo.svc.cluster.local:8000" # NIM
-DATA_STORE_URL = "http://nemodatastore-sample.hacohen-nemo.svc.cluster.local:8000" # Data Store
-NEMO_URL = "http://nemo-operator.hacohen-nemo.svc.cluster.local:8443"
+# # (Required) NeMo Microservices URLs
+# NDS_URL = "http://nemodatastore-sample.hacohen-nemo.svc.cluster.local:8000" # Data Store
+# ENTITY_STORE_URL = "http://nemoentitystore-sample.hacohen-nemo.svc.cluster.local:8000" # Entity Store
+# CUSTOMIZER_URL = "http://nemocustomizer-sample.hacohen-nemo.svc.cluster.local:8000" # Customizer
+# EVALUATOR_URL = "http://nemoevaluator-sample.hacohen-nemo.svc.cluster.local:8000" # Evaluator
+# GUARDRAILS_URL = "http://nemoguardrails-sample.hacohen-nemo.svc.cluster.local:8000" # Guardrails
+# NIM_URL = "http://meta-llama3-1b-instruct.hacohen-nemo.svc.cluster.local:8000" # NIM
+# DATA_STORE_URL = "http://nemodatastore-sample.hacohen-nemo.svc.cluster.local:8000" # Data Store
+# NEMO_URL = "http://nemo-operator.hacohen-nemo.svc.cluster.local:8443"
 
 
+NDS_URL = "http://localhost:8001"  # Data Store
+ENTITY_STORE_URL = "http://localhost:8002"  # Entity Store
+CUSTOMIZER_URL = "http://localhost:8003"  # Customizer
+EVALUATOR_URL = "http://localhost:8004"  # Evaluator
+GUARDRAILS_URL = "http://localhost:8005"  # Guardrails
+DATA_STORE_URL = NDS_URL 
+NIM_URL = "http://localhost:8006"  # NIM
+NEMO_URL = "http://localhost:8007"
 # (Required) Hugging Face Token
-HF_TOKEN = "" 
+HF_TOKEN = ""
 
 # (Optional) To observe training with WandB
 WANDB_API_KEY = ""
