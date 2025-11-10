@@ -6,3 +6,4 @@ nemo-configs.yaml.backup
 .env
 .DS_store
 .claude
+.venv
