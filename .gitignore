@@ -9,3 +9,5 @@ nemo-configs.yaml.backup
 .venv
 llamastack/e2e-test/__pycache__
 llamastack/e2e-test/sample_data
+*.jsonl
+*.pyc
