@@ -49,14 +49,24 @@ spec:
                 secretKeyRef:
                   name: ngc-api-secret
                   key: NGC_API_KEY
+            - name: NVIDIA_BASE_URL
+              value: "http://meta-llama3-1b-instruct.hacohen-nemo.svc.cluster.local:8000"
+            - name: NVIDIA_ENTITY_STORE_URL
+              value: "http://nemoentitystore-sample.hacohen-nemo.svc.cluster.local:8000"
+            - name: NVIDIA_DATASETS_URL
+              value: "http://nemodatastore-sample.hacohen-nemo.svc.cluster.local:8000"
+            - name: NVIDIA_DATASET_NAMESPACE
+              value: "xlam-tutorial-ns"
+            - name: NVIDIA_PROJECT_ID
+              value: "llamastack-project"
             - name: NVIDIA_CUSTOMIZER_URL
-              value: "http://customizer.hacohen-nemo.svc.cluster.local:8000"
+              value: "http://nemocustomizer-sample.hacohen-nemo.svc.cluster.local:8000"
             - name: GUARDRAILS_SERVICE_URL
-              value: "http://guardrail.hacohen-nemo.svc.cluster.local:8000"
+              value: "http://nemoguardrails-sample.hacohen-nemo.svc.cluster.local:8000"
             - name: NVIDIA_GUARDRAILS_CONFIG_ID
               value: "demo-self-check-input-output"
             - name: NVIDIA_EVALUATOR_URL
-              value: "http://evaluator.hacohen-nemo.svc.cluster.local:8000"
+              value: "http://nemoevaluator-sample.hacohen-nemo.svc.cluster.local:8000"
             - name: NIM_PROXY_URL
               value: "http://meta-llama3-1b-instruct.hacohen-nemo.svc.cluster.local:8000"
             - name: INFERENCE_MODEL
