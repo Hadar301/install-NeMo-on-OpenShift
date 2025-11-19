@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export LLAMA_STACK_PORT=8321
-export NVIDIA_API_KEY="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"
+export NVIDIA_API_KEY=""
 # Use host.containers.internal to access host from container
 export NVIDIA_BASE_URL="http://host.containers.internal:8006"
 export NVIDIA_DATASETS_URL="http://host.containers.internal:8001"
