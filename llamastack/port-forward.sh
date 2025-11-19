@@ -8,23 +8,26 @@
 # NIM_URL = "http://localhost:8006"  # NIM
 
 # Trap SIGINT and SIGTERM to kill all background processes
+NAMESPACE="hacohen-nemo"
 trap 'echo "Stopping all port-forwards..."; kill $(jobs -p) 2>/dev/null; exit' INT TERM
 
 echo "Starting port-forwards..."
 
-oc port-forward svc/nemodatastore-sample 8001:8000 -n arhkp-nemo-helm &
+oc port-forward svc/nemodatastore-sample 8001:8000 -n $NAMESPACE &
 sleep 0.1s
-oc port-forward svc/nemoentitystore-sample 8002:8000 -n arhkp-nemo-helm &
+oc port-forward svc/nemoentitystore-sample 8002:8000 -n $NAMESPACE &
 sleep 0.1s
-oc port-forward svc/nemocustomizer-sample 8003:8000 -n arhkp-nemo-helm &
+oc port-forward svc/nemocustomizer-sample 8003:8000 -n $NAMESPACE &
 sleep 0.1s
-oc port-forward svc/nemoevaluator-sample 8004:8000 -n arhkp-nemo-helm &
+oc port-forward svc/nemoevaluator-sample 8004:8000 -n $NAMESPACE &
 sleep 0.1s
-oc port-forward svc/nemoguardrails-sample 8005:8000 -n arhkp-nemo-helm &
+oc port-forward svc/nemoguardrails-sample 8005:8000 -n $NAMESPACE &
 sleep 0.1s
-oc port-forward svc/meta-llama3-1b-instruct 8006:8000 -n arhkp-nemo-helm &
+oc port-forward svc/meta-llama3-1b-instruct 8006:8000 -n $NAMESPACE &
 sleep 0.1s
-oc port-forward svc/nemo-samples-nemo-operator 8007:8443 -n arhkp-nemo-helm &
+oc port-forward svc/nemo-samples-nemo-operator 8007:8443 -n $NAMESPACE &
+sleep 0.1s
+oc port-forward svc/llamastack 8321:8321 -n $NAMESPACE
 
 echo "All port-forwards started. Press Ctrl+C to stop all."
 
