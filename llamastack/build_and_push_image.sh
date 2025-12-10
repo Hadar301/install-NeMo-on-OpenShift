@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-git clone git clone https://github.com/meta-llama/llama-stack.git
+git clone https://github.com/meta-llama/llama-stack.git
 
 cd llama-stack
 
