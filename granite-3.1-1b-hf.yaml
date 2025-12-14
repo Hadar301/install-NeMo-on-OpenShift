@@ -1,0 +1,91 @@
+---
+# NIMPipeline to deploy IBM Granite-3.1-1B-Instruct from HuggingFace
+apiVersion: apps.nvidia.com/v1alpha1
+kind: NIMPipeline
+metadata:
+  name: granite-pipeline
+  namespace: hacohen-nemo
+spec:
+  services:
+    - name: granite-3-1-1b-instruct
+      enabled: true
+      spec:
+        env:
+          # HuggingFace model configuration
+          - name: HF_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hf-token
+                key: HF_TOKEN
+          - name: NIM_MODEL_NAME
+            value: "hf://ibm-granite/granite-3.1-1b-a400m-instruct"
+          - name: NIM_SERVED_MODEL_NAME
+            value: "granite-3.1-1b-instruct"
+
+          # NeMo Integration (Critical for dynamic LoRA!)
+          - name: NIM_PEFT_SOURCE
+            value: http://nemoentitystore-sample.hacohen-nemo.svc.cluster.local:8000
+          - name: NIM_PEFT_REFRESH_INTERVAL
+            value: "180"
+          - name: NIM_MAX_CPU_LORAS
+            value: "16"
+          - name: NIM_MAX_GPU_LORAS
+            value: "8"
+          - name: NIM_ENABLE_CUSTOMIZATION
+            value: "true"
+          - name: NIM_CUSTOMIZATION_ENABLED_MODELS
+            value: "granite-3.1-1b-instruct"
+          - name: NIM_GUIDED_DECODING_BACKEND
+            value: lm-format-enforcer
+
+        # Use the multi-LLM NIM container that supports HuggingFace models
+        image:
+          repository: nvcr.io/nim/nvidia/llm-nim
+          tag: latest
+          pullPolicy: Always
+          pullSecrets:
+          - ngc-secret
+
+        authSecret: ngc-api-secret
+
+        # Create a PVC for model storage (NIM will download to this)
+        storage:
+          pvc:
+            create: true
+            storageClass: "gp3-csi"
+            size: "50Gi"  # 1B model
+            volumeAccessMode: ReadWriteOnce
+
+        replicas: 1
+
+        # Startup and readiness probes - reasonable timeout for 1B model
+        startupProbe:
+          httpGet:
+            path: /v1/health/ready
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 120  # 20 minutes max (120 * 10s) - same as original
+
+        readinessProbe:
+          httpGet:
+            path: /v1/health/ready
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          failureThreshold: 3
+
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+
+        tolerations:
+          - key: "g5-gpu"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
+
+        expose:
+          service:
+            type: ClusterIP
+            port: 8000
