@@ -1,5 +1,7 @@
 ## Installing NeMo Microservices on OpenShift AI:
 
+See this [repo](https://github.com/RHEcosystemAppEng/NeMo-Microservices) for the final product.
+
 1. Verify the Hardware and Software [Requirements](https://docs.nvidia.com/nemo/microservices/latest/requirements.html?utm_source=chatgpt.com) for NeMo Microservices
 2. Follow the [prerequisites](https://docs.nvidia.com/nim-operator/latest/nemo-prerequisites.html) instruction, and create `.env` file with the following fields:
     ```
